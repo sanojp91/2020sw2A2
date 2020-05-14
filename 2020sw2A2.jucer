@@ -4,6 +4,9 @@
               pluginFormats="buildAU,buildStandalone,buildVST,buildVST3" pluginVST3Category="Modulation"
               pluginManufacturer="PerssonJonasSW2">
   <MAINGROUP id="LBPl9v" name="2020sw2A2">
+    <GROUP id="{883920C3-81BC-39B3-A0B6-89A64870B8EE}" name="Resources">
+      <FILE id="wtGgVQ" name="PlugBG.jpg" compile="0" resource="1" file="../../Desktop/PlugBG.jpg"/>
+    </GROUP>
     <GROUP id="{0FFA12FF-DB34-7915-F4B7-F9341062AE3E}" name="Source">
       <FILE id="xNTsf2" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

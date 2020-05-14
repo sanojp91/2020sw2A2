@@ -27,10 +27,12 @@ public:
     //update the sine wave frequency according to the sample rate
     void updateAngleDelta()
     {
-        auto cyclesPerSample = currentFrequency / currentSampleRate;
+        auto cyclesPerSample = mFreq / currentSampleRate;
         angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
     }
     
+
+
     
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -40,6 +42,8 @@ public:
    #endif
 
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
+    
+    //void processBlockBypassed (AudioBuffer<float>&inBuffer, MidiBuffer&) override;
 
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
@@ -63,15 +67,22 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    float mFreq { 800 };
+    float mGain { 1.0f };
+    float mInput { 1.0f };
+   // float mMix {0.0f };
 
 private:
-    
+    AudioParameterFloat* mMixParameter;
+   // AudioParameterFloat* mFreqParameter;
     //declaring variables for the sine wave
     double currentSampleRate = 0.0;
     double currentAngle = 0.0;
     double angleDelta = 0.0;
+ 
     // I set the frequency to 800 because I felt that it gives a pretty good sound in regards to not being overly "piercy" with high frequencies or too "bassy"
-    double currentFrequency = 800;
+   // double currentFrequency = 800;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (_2020sw2a2AudioProcessor)

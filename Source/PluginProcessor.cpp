@@ -24,6 +24,11 @@ _2020sw2a2AudioProcessor::_2020sw2a2AudioProcessor()
                        )
 #endif
 {
+    
+    addParameter(mMixParameter = new AudioParameterFloat("mix", "Mix", 0.0, 1.0,0.5));
+    
+   // addParameter(mFreqParameter = new AudioParameterFloat("freq", "Frequency", 60.f, 16000.f, 800.f));
+    
 }
 
 _2020sw2a2AudioProcessor::~_2020sw2a2AudioProcessor()
@@ -100,6 +105,18 @@ void _2020sw2a2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     currentSampleRate = sampleRate;
     updateAngleDelta();
     }
+    
+  /* mFreqSlider.onValueChange = [this]
+      {
+          if (currentSampleRate > 0.0)
+              updateAngleDelta();
+      }
+    */
+    
+
+        
+    
+
 }
 
 void _2020sw2a2AudioProcessor::releaseResources()
@@ -137,20 +154,37 @@ void _2020sw2a2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
+    
+    //when mFreq value changes update the angle delta function
+    if (currentSampleRate > 0.0)
+    {
+        updateAngleDelta();
+    }
+    
     //iterating through the output channels
     for (auto channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         //get read pointer for the input and write pointer for the output
         auto* inBuffer = buffer.getReadPointer(channel);
-        
         auto* outBuffer = buffer.getWritePointer(channel);
-       
+        
+
+        
+        
         for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            
+            auto* cleanSig = outBuffer;
+            
             //creating the sinewave and having it modulate incoming audio
-            outBuffer[sample] = inBuffer[sample] * (float) std::sin(currentAngle) * 0.5;
+            outBuffer[sample] = inBuffer[sample] * (float) std::sin(currentAngle) * 0.5  * Decibels::decibelsToGain(mGain);
             currentAngle += angleDelta;
+            
+           // dry = ((1 - mMix) * dryBuffer) + (mMix * inBuffer):
+          //  outBuffer[sample] = ((1 - mMix) * cleanOut) + (mMix * input);
+            
+            buffer.setSample(channel, sample, buffer.getSample(*inBuffer, sample) * (1 - *mMixParameter) + *cleanSig * *mMixParameter);
+            
         }
         
     }
@@ -177,7 +211,7 @@ void _2020sw2a2AudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    // as intermediaries to make it easy to save and load complex data.  
 }
 
 void _2020sw2a2AudioProcessor::setStateInformation (const void* data, int sizeInBytes)

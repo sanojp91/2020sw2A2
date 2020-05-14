@@ -89,6 +89,10 @@
 			isa = PBXBuildFile;
 			fileRef = 243B78CDE3804D16FB732965;
 		};
+		F68767303266017A51C757DA = {
+			isa = PBXBuildFile;
+			fileRef = 6B5121A4AECD82D4597C8120;
+		};
 		EA24FC043299F19AFAC1D0C5 = {
 			isa = PBXBuildFile;
 			fileRef = 66E46825BF7E1B62BEE16897;
@@ -390,6 +394,13 @@
 			path = "../../JuceLibraryCode/include_juce_audio_basics.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
+		6B5121A4AECD82D4597C8120 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = BinaryData.cpp;
+			path = ../../JuceLibraryCode/BinaryData.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		72C5828122D2EE25C05D23D2 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -424,6 +435,13 @@
 			name = "juce_cryptography";
 			path = "/Users/rohojua/SDK/JUCE/modules/juce_cryptography";
 			sourceTree = "<absolute>";
+		};
+		9D68CE0C2CA074F9C7421184 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = BinaryData.h;
+			path = ../../JuceLibraryCode/BinaryData.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		9E9BB15992B32D6433B5B10B = {
 			isa = PBXFileReference;
@@ -501,6 +519,13 @@
 			name = "juce_audio_basics";
 			path = "/Users/rohojua/SDK/JUCE/modules/juce_audio_basics";
 			sourceTree = "<absolute>";
+		};
+		C69771A4861E49F89B33D433 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.jpeg;
+			name = PlugBG.jpg;
+			path = ../../../../Desktop/PlugBG.jpg;
+			sourceTree = "SOURCE_ROOT";
 		};
 		C7605AB9C5E6CA5A80B99A49 = {
 			isa = PBXFileReference;
@@ -621,6 +646,14 @@
 			path = System/Library/Frameworks/AudioUnit.framework;
 			sourceTree = SDKROOT;
 		};
+		C3207AC3B756DCC8EC9C6CD8 = {
+			isa = PBXGroup;
+			children = (
+				C69771A4861E49F89B33D433,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		FF1853F57E6FB7DD864B6540 = {
 			isa = PBXGroup;
 			children = (
@@ -635,6 +668,7 @@
 		E86D6F30E11508A0E015EBC7 = {
 			isa = PBXGroup;
 			children = (
+				C3207AC3B756DCC8EC9C6CD8,
 				FF1853F57E6FB7DD864B6540,
 			);
 			name = 2020sw2A2;
@@ -665,6 +699,8 @@
 			isa = PBXGroup;
 			children = (
 				FBEF4C94D2155B52A804E8B6,
+				6B5121A4AECD82D4597C8120,
+				9D68CE0C2CA074F9C7421184,
 				66E46825BF7E1B62BEE16897,
 				C7605AB9C5E6CA5A80B99A49,
 				44078F35653899EC8D296DEE,
@@ -1689,6 +1725,7 @@
 			files = (
 				F124F4DF8701CC554F40F4F5,
 				B9A6A6ACD5580C5C4283F93A,
+				F68767303266017A51C757DA,
 				EA24FC043299F19AFAC1D0C5,
 				3B22BBB58D028723D9D0C934,
 				B5ABC163A9F0F52D3CBAE1EA,
