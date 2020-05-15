@@ -24,11 +24,7 @@ _2020sw2a2AudioProcessor::_2020sw2a2AudioProcessor()
                        )
 #endif
 {
-    
-    addParameter(mMixParameter = new AudioParameterFloat("mix", "Mix", 0.0, 1.0,0.5));
-    
-   // addParameter(mFreqParameter = new AudioParameterFloat("freq", "Frequency", 60.f, 16000.f, 800.f));
-    
+   
 }
 
 _2020sw2a2AudioProcessor::~_2020sw2a2AudioProcessor()
@@ -103,18 +99,15 @@ void _2020sw2a2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     //setting the sample rate and updating to the sinewave generator
     {
     currentSampleRate = sampleRate;
-    updateAngleDelta();
-    }
-    
-  /* mFreqSlider.onValueChange = [this]
-      {
-          if (currentSampleRate > 0.0)
-              updateAngleDelta();
-      }
-    */
-    
-
         
+    mGain.reset(sampleRate, 0.05f);
+    mGain.setTargetValue(0.f);
+        
+    updateAngleDelta();
+        
+    mByPass = false;
+        
+    }
     
 
 }
@@ -169,22 +162,27 @@ void _2020sw2a2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
         auto* outBuffer = buffer.getWritePointer(channel);
         
 
-        
-        
         for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
             
-            auto* cleanSig = outBuffer;
-            
+           
+            if (mByPass)
+            {
             //creating the sinewave and having it modulate incoming audio
-            outBuffer[sample] = inBuffer[sample] * (float) std::sin(currentAngle) * 0.5  * Decibels::decibelsToGain(mGain);
-            currentAngle += angleDelta;
+            outBuffer[sample] = inBuffer[sample] * (float) std::sin(currentAngle) * 0.5  * Decibels::decibelsToGain(mGain.getNextValue());
+            }
             
+            else
+            {
+                
+                outBuffer[sample] = inBuffer[sample] * Decibels::decibelsToGain(mGain.getNextValue());
+                
+            }
+            
+             currentAngle += angleDelta;
            // dry = ((1 - mMix) * dryBuffer) + (mMix * inBuffer):
           //  outBuffer[sample] = ((1 - mMix) * cleanOut) + (mMix * input);
-            
-            buffer.setSample(channel, sample, buffer.getSample(*inBuffer, sample) * (1 - *mMixParameter) + *cleanSig * *mMixParameter);
-            
+                      
         }
         
     }
@@ -226,3 +224,12 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new _2020sw2a2AudioProcessor();
 }
+
+
+void _2020sw2a2AudioProcessor::setByPass(bool b)
+{
+    
+    mByPass = b;
+    
+}
+

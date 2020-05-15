@@ -32,7 +32,6 @@ public:
     }
     
 
-
     
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -69,20 +68,21 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     float mFreq { 800 };
-    float mGain { 1.0f };
-    float mInput { 1.0f };
-   // float mMix {0.0f };
-
+    float mMix { 0.0f };
+    bool mByPass {false};
+    void setByPass(bool t);
+    SmoothedValue<float> mGain;
+  
+    
 private:
-    AudioParameterFloat* mMixParameter;
-   // AudioParameterFloat* mFreqParameter;
+
     //declaring variables for the sine wave
     double currentSampleRate = 0.0;
     double currentAngle = 0.0;
     double angleDelta = 0.0;
  
-    // I set the frequency to 800 because I felt that it gives a pretty good sound in regards to not being overly "piercy" with high frequencies or too "bassy"
-   // double currentFrequency = 800;
+   // SmoothedValue<float> mGain;
+    
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (_2020sw2a2AudioProcessor)
