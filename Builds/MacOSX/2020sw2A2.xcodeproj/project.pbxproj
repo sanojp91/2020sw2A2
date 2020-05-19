@@ -408,6 +408,13 @@
 			path = System/Library/Frameworks/DiscRecording.framework;
 			sourceTree = SDKROOT;
 		};
+		80C4C3092DB0AE44B354D834 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.jpeg;
+			name = PlugBG.jpg;
+			path = ../../Resources/PlugBG.jpg;
+			sourceTree = "SOURCE_ROOT";
+		};
 		8C6AAF8ED62CD5163BB30598 = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.objcpp;
@@ -519,13 +526,6 @@
 			name = "juce_audio_basics";
 			path = "/Users/rohojua/SDK/JUCE/modules/juce_audio_basics";
 			sourceTree = "<absolute>";
-		};
-		C69771A4861E49F89B33D433 = {
-			isa = PBXFileReference;
-			lastKnownFileType = image.jpeg;
-			name = PlugBG.jpg;
-			path = ../../../../Desktop/PlugBG.jpg;
-			sourceTree = "SOURCE_ROOT";
 		};
 		C7605AB9C5E6CA5A80B99A49 = {
 			isa = PBXFileReference;
@@ -649,7 +649,7 @@
 		C3207AC3B756DCC8EC9C6CD8 = {
 			isa = PBXGroup;
 			children = (
-				C69771A4861E49F89B33D433,
+				80C4C3092DB0AE44B354D834,
 			);
 			name = Resources;
 			sourceTree = "<group>";
