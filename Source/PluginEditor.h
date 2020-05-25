@@ -61,21 +61,21 @@ public:
     
 };
 
-class _2020sw2a2AudioProcessorEditor  : public AudioProcessorEditor,
-                                        public Slider::Listener,
-                                        public Button::Listener
+class _2020sw2a2AudioProcessorEditor  : public AudioProcessorEditor//,
+                                       // public Slider::Listener,
+                                       // public Button::Listener
 
 {
 public:
-    _2020sw2a2AudioProcessorEditor (_2020sw2a2AudioProcessor&);
-    ~_2020sw2a2AudioProcessorEditor();
+    _2020sw2a2AudioProcessorEditor (_2020sw2a2AudioProcessor&, AudioProcessorValueTreeState&);
+    ~_2020sw2a2AudioProcessorEditor(); //adding a reference to the the audio processor value tree state, doing that will need you to go to create editor in audioprocessor.cpp and declare this as well to avoid errors
 
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
 
-    void sliderValueChanged (Slider* slider) override;
-    void buttonClicked (Button* button) override;
+   // void sliderValueChanged (Slider* slider) override;
+   // void buttonClicked (Button* button) override;
     
     Slider mFreqSlider;
     Slider mMixSlider;
@@ -87,7 +87,14 @@ private:
     Image PlugBG;
     
     OtherLookAndFeel otherLookAndFeel;
+    
+   // This reference is provided as a quick way for your editor to
+   // access the processor object that created it.
+   _2020sw2a2AudioProcessor& processor;
    
+   //reference the value tree state that stores info locally
+   AudioProcessorValueTreeState& valueTreeState;
+    
     //declaring frequency slider 
    // Slider mFreqSlider;
     Label mFreqLabel;
@@ -103,9 +110,12 @@ private:
    // TextButton mBypassButton;
     Label mBypassLabel;
 
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    _2020sw2a2AudioProcessor& processor;
+    
+    //connects the atomic float from audio processor to the slider 
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> freqAttachment;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mixAttachment;
+    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> byPassAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (_2020sw2a2AudioProcessorEditor)
 };

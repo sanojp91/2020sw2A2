@@ -21,10 +21,35 @@ _2020sw2a2AudioProcessor::_2020sw2a2AudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ) , parameters(*this, nullptr, Identifier("RingMod"),
+                        {
+                            std::make_unique<AudioParameterFloat>("freq", // ID name
+                                                                  "Frequency", // Host name that shows up in DAW
+                                                                  60.0f, //min value
+                                                                  2000.0f, //max value
+                                                                  800.0f), //default value
+                           
+                           std::make_unique<AudioParameterFloat>("gain",
+                                                                 "Gain",
+                                                                 0.0f,
+                                                                 2.0f,
+                                                                 1.0f),
+                           std::make_unique<AudioParameterFloat>("mix",
+                                                                 "Mix",
+                                                                 0.0f,
+                                                                 100.0f,
+                                                                 100.0f),
+                           std::make_unique<AudioParameterBool>("bypass",
+                                                                "Bypass",
+                                                                false)
+                        })
 #endif
 {
-   
+   // initialazation
+    freqParameter = parameters.getRawParameterValue("freq");
+    gainParameter = parameters.getRawParameterValue("gain");
+    mixParameter = parameters.getRawParameterValue("mix");
+    byPassParameter = parameters.getRawParameterValue("bypass");
 }
 
 _2020sw2a2AudioProcessor::~_2020sw2a2AudioProcessor()
@@ -99,13 +124,19 @@ void _2020sw2a2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     //setting the sample rate and updating to the sinewave generator
     {
     currentSampleRate = sampleRate;
+    
         
-    mGain.reset(sampleRate, 0.05f);
-    mGain.setTargetValue(0.f);
+    
+    //mGain.reset(sampleRate, 0.05f);
+   // mGain.setTargetValue(0.f);
         
     updateAngleDelta();
+    
+    //mFreq = *freqParameter;
         
-    mByPass = false;
+   // mByPass = *byPassParameter;
+    //mByPass = false;
+    *byPassParameter = false;
         
     }
     
@@ -166,16 +197,16 @@ void _2020sw2a2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
         {
             
            
-            if (mByPass)
+            if (*byPassParameter)
             {
             //creating the sinewave and having it modulate incoming audio
-            outBuffer[sample] = inBuffer[sample] * (float) std::sin(currentAngle) * 0.5  * Decibels::decibelsToGain(mGain.getNextValue());
+                outBuffer[sample] = inBuffer[sample] * (float) std::sin(currentAngle) * 0.5  * *gainParameter; //Decibels::decibelsToGain(mGain.getNextValue()); 
             }
             
             else
             {
                 
-                outBuffer[sample] = inBuffer[sample] * Decibels::decibelsToGain(mGain.getNextValue());
+                outBuffer[sample] = inBuffer[sample] * *gainParameter; //Decibels::decibelsToGain(mGain.getNextValue());
                 
             }
             
@@ -201,7 +232,7 @@ bool _2020sw2a2AudioProcessor::hasEditor() const
 
 AudioProcessorEditor* _2020sw2a2AudioProcessor::createEditor()
 {
-    return new _2020sw2a2AudioProcessorEditor (*this);
+    return new _2020sw2a2AudioProcessorEditor (*this, parameters); //create a listener to the apvts
 }
 
 //==============================================================================
@@ -209,13 +240,32 @@ void _2020sw2a2AudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.  
+    // as intermediaries to make it easy to save and load complex data.
+    
+    auto state = parameters.copyState();
+    std::unique_ptr<XmlElement> xml (state.createXml()); //store the parameters state
+    copyXmlToBinary(*xml, destData); //saves the pointer xml to have it saved when the plugin is closed
+    
 }
 
 void _2020sw2a2AudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    
+    std::unique_ptr<XmlElement> xmlState (getXmlFromBinary(data, sizeInBytes)); //get the xml data from the memory
+    if (xmlState.get() != nullptr)
+    {
+        
+        if (xmlState -> hasTagName(parameters.state.getType()))
+        {
+            
+            parameters.replaceState(ValueTree::fromXml(*xmlState)); //replace all of the data in the parameters with the saved data
+            
+        }
+        
+    }
+    
 }
 
 //==============================================================================
@@ -226,10 +276,10 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 
-void _2020sw2a2AudioProcessor::setByPass(bool b)
+/*void _2020sw2a2AudioProcessor::setByPass(bool b)
 {
     
     mByPass = b;
     
 }
-
+*/

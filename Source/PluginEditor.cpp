@@ -12,8 +12,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-_2020sw2a2AudioProcessorEditor::_2020sw2a2AudioProcessorEditor (_2020sw2a2AudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+_2020sw2a2AudioProcessorEditor::_2020sw2a2AudioProcessorEditor (_2020sw2a2AudioProcessor& p, AudioProcessorValueTreeState& vts)
+    : AudioProcessorEditor (&p), processor (p), valueTreeState(vts) //creates a reference for the apvts
 {
     
     //initilizing the background image
@@ -33,9 +33,11 @@ _2020sw2a2AudioProcessorEditor::_2020sw2a2AudioProcessorEditor (_2020sw2a2AudioP
     mFreqSlider.setRange(60.f, 16000.f, 0.01);
     mFreqSlider.setValue(800.f);
     mFreqSlider.setTextValueSuffix(" Hz");
-    mFreqSlider.addListener(this);
+   // mFreqSlider.addListener(this); // take this away if using value tree state
     mFreqSlider.setSkewFactorFromMidPoint(1000.0f);
     addAndMakeVisible(mFreqSlider);
+    //for the value tree state
+    freqAttachment.reset( new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "freq", mFreqSlider));
     
     mFreqLabel.setText("Freq", dontSendNotification);
     mFreqLabel.attachToComponent(&mFreqSlider, true);
@@ -48,7 +50,8 @@ _2020sw2a2AudioProcessorEditor::_2020sw2a2AudioProcessorEditor (_2020sw2a2AudioP
     mMixSlider.setRange(0.f, 100.f, 0.01f);
     mMixSlider.setValue(50.f);
     mMixSlider.setTextValueSuffix(" %");
-    mMixSlider.addListener(this);
+    //mMixSlider.addListener(this);
+    mixAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "mix", mMixSlider));
     addAndMakeVisible(mMixSlider);
     
     mMixLabel.setText("Mix", dontSendNotification);
@@ -62,8 +65,9 @@ _2020sw2a2AudioProcessorEditor::_2020sw2a2AudioProcessorEditor (_2020sw2a2AudioP
     mGainSlider.setRange (-60.0f, 20.0f, 0.1f);
     mGainSlider.setTextValueSuffix(" dB");
     mGainSlider.setValue(0.0f);
-    mGainSlider.addListener(this);
+    //mGainSlider.addListener(this);
     addAndMakeVisible(mGainSlider);
+    gainAttachment.reset( new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gain", mGainSlider));
     
     mGainLabel.setText("Output", dontSendNotification);
     mGainLabel.attachToComponent(&mGainSlider, false);
@@ -71,9 +75,10 @@ _2020sw2a2AudioProcessorEditor::_2020sw2a2AudioProcessorEditor (_2020sw2a2AudioP
     
     
     mBypassButton.setClickingTogglesState(true);
-    mBypassButton.setButtonText("OFF");
+    mBypassButton.setButtonText("On/Off");
     mBypassButton.setState(Button::ButtonState::buttonNormal);
-    mBypassButton.addListener(this);
+   // mBypassButton.addListener(this);
+    byPassAttachment.reset( new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, "bypass", mBypassButton));
     addAndMakeVisible(mBypassButton);
     
     // editor's size
@@ -118,7 +123,9 @@ void _2020sw2a2AudioProcessorEditor::resized()
     
 }
 
-void _2020sw2a2AudioProcessorEditor::sliderValueChanged (Slider *slider)
+
+
+/*void _2020sw2a2AudioProcessorEditor::sliderValueChanged (Slider *slider)
 {
     
      if (slider == &mFreqSlider)
@@ -165,4 +172,5 @@ void _2020sw2a2AudioProcessorEditor::buttonClicked (Button* button)
 
     
 }
+*/
 

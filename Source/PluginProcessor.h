@@ -27,7 +27,7 @@ public:
     //update the sine wave frequency according to the sample rate
     void updateAngleDelta()
     {
-        auto cyclesPerSample = mFreq / currentSampleRate;
+        auto cyclesPerSample = *freqParameter / currentSampleRate;
         angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
     }
     
@@ -67,11 +67,11 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    float mFreq { 800 };
-    float mMix { 0.0f };
-    bool mByPass {false};
-    void setByPass(bool t);
-    SmoothedValue<float> mGain;
+   // float mFreq { 800 };
+   // float mMix { 0.0f };
+   // bool mByPass {false};
+   // void setByPass(bool t);
+    //SmoothedValue<float> mGain;
   
     
 private:
@@ -83,6 +83,17 @@ private:
  
    // SmoothedValue<float> mGain;
     
+    //create variables to store audio parameters with a atomic float pointer as a nullptr
+    std::atomic<float>* freqParameter = nullptr;
+    std::atomic<float>* gainParameter = nullptr;
+    std::atomic<float>* mixParameter = nullptr;
+
+    //boolen for the bypass button
+    std::atomic<float>* byPassParameter = nullptr;
+
+    
+    //audio processor value tree state for storing parameters and automation
+    AudioProcessorValueTreeState parameters;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (_2020sw2a2AudioProcessor)
